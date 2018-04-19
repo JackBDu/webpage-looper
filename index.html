@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0">
+    <title>Webpage Looper</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        overflow: none;
+        cursor: none;
+      }
+      body {
+        background-color: black;
+      }
+      #viewer, #video {
+        width: 100vw;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        display: none;
+      }
+      #titles {
+        width: 100vw;
+        height: 100vh;
+        position: fixed;
+        padding-top: 43vh;
+        background-color: rgba(0,0,0,1);
+        color: #fff;
+        z-index: 100;
+        top: 0;
+        left: 0;
+        text-align: center;
+        opacity: 1;
+        transition: opacity 0.5s linear;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-weight: 100;
+        line-height: 4vh;
+      }
+      #titles h1 {
+        font-size: 3vh;
+        font-weight: 200;
+      }
+      #titles h2 {
+        font-weight: 200;
+        font-size: 3vh;
+      }
+      #titles h2:first-of-type {
+        line-height: 7vh;
+      }
+    </style>
+  </head>
+  <body onload="loopPage();">
+    <iframe id="viewer" src="mandarinizer/index.html"></iframe>
+    <video id="video" onended="loopPage();" nocontrols autoplay>
+      <source src="" type="video/mp4">
+    </video>
+    <div id="titles"></div>
+  </body>
+  <script>
+    var willReload = false;   // set to true if the looper crashes after running for a while
+    var transitionDuration = 5000;
+    var pagesArray = [
+      { "type": "page",
+        "title": "<h1>myPage Title</h1><h2>myPage Subtitle</h2>",
+        "link": "pages/myPage.html",
+        "duration": "5000"
+      },
+      { "type": "page",
+        "title": "<h1>GitHub</h1><h2>Wikipedia</h2>",
+        "link": "https://en.wikipedia.org/wiki/GitHub",
+        "duration": "5000"
+      },
+      { "type": "video",
+        "title": "<h1>myVideo Title</h1><h2>myVideo Subtitle</h2>",
+        "link": "videos/myVideo.mp4",
+        "duration": "0" // duration based on video
+      }];
+    var viewerElement = document.getElementById("viewer");
+    var videoElement = document.getElementById("video");
+    var titlesElement = document.getElementById("titles");
+    var pageIndex = 0;
+    var pageLink = "";
+    function loopPage() {
+      if (pageIndex >= pagesArray.length) {
+        if (willReload) {
+          location.reload();
+        } else {
+          pageIndex = 0;
+        }
+      }
+      var page = pagesArray[pageIndex];
+      pageLink = page.link;
+      titlesElement.innerHTML = page.title;
+      titlesElement.style.opacity = "1";
+      setTimeout(function() {
+        titlesElement.style.opacity = "0";
+        page.type === "page" ? setTimeout(loopPage, parseInt(page.duration)) : 1;
+      }, transitionDuration);
+      setTimeout(page.type === "video" ? updateVideo : updateViewer, transitionDuration-1000);
+      if (pageIndex < pagesArray.length) {
+        pageIndex++;
+      } else {
+        pageIndex = 0;
+      }
+    }
+    function updateViewer() {
+      videoElement.style.display = "none";
+      videoElement.src = "";
+      viewerElement.style.display = "block";
+      viewerElement.src = pageLink;
+    }
+    function updateVideo() {
+      viewerElement.style.display = "none";
+      viewerElement.src = "";
+      videoElement.style.display = "block";
+      videoElement.src = pageLink;
+    }
+  </script>
+</html>

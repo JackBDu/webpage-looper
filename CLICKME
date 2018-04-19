@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# use this if any of the pages need to be running on localhost
+
+# change the path to the path to your webpage-looper
+cd ~/Downloads/webpage-looper
+
+# running google chrome in kiosk mode
+/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --kiosk http://localhost:8000 &
+
+# running SimpleHTTPServer on pwd
+python -m SimpleHTTPServer
